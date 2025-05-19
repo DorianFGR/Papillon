@@ -35,6 +35,8 @@ import SettingsGeneral from "@/views/settings/SettingsGeneral";
 import SettingsPersonalization from "@/views/settings/SettingsPersonalization";
 import SettingsExperimental from "@/views/settings/SettingsExperimental";
 import SettingsProject from "@/views/settings/SettingsProject";
+import SettingsQRcode from "@/views/settings/SettingsQrCode";
+import SettingsAddQrCode from "@/views/settings/SettingsAddQrCode";
 
 const settingsScreens = [
   createScreen("Settings", Settings, {
@@ -163,6 +165,12 @@ const settingsScreens = [
   }),
   createScreen("SettingsProject", SettingsProject, {
     headerTitle: "Projet Papillon",
+  }),
+  createScreen("SettingsQrCode", SettingsQRcode, {
+    headerTitle: "QR Code",
+  }),
+  createScreen("SettingsAddQrCode", SettingsAddQrCode, {
+    headerTitle: "Ajouter un QR Code",
   }),
 ] as const;
 
