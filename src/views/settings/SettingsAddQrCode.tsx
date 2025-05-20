@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, View, Alert } from "react-native";
 import type { Screen } from "@/router/helpers/types";
 import { usePapillonTheme as useTheme } from "@/utils/ui/theme";
@@ -9,12 +9,13 @@ import {
   NativeItem,
   NativeText,
 } from "@/components/Global/NativeComponents";
-import { Camera, File, Image } from "lucide-react-native";
+import { Camera, File, Image, QrCodeIcon } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useCameraPermissions } from "expo-camera";
-import * as BarCodeScanner from "expo-barcode-scanner"; // Importez cette bibliothèque
+import * as BarCodeScanner from "expo-barcode-scanner";
+import { useQrCodeStore } from "@/stores/QrCode";
+import { QrCode } from "@/stores/QrCode/types";
 
-// État pour stocker le résultat du QR code
 const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
   navigation,
 }) => {
@@ -23,9 +24,20 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
   const reelsObject = useGradesStore((store) => store.reels);
   const reels = Object.values(reelsObject);
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const { addQrCode, getAllQrCodes } = useQrCodeStore();
+  const [savedQrCodes, setSavedQrCodes] = useState<QrCode[]>([]);
+
+  useEffect(() => {
+    const codes = getAllQrCodes();
+    setSavedQrCodes(codes);
+  }, []);
+
+  const loadQrCodes = () => {
+    const codes = getAllQrCodes();
+    setSavedQrCodes(codes);
+  };
 
   const addQrCodePic = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -36,23 +48,37 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
 
     if (!result.canceled && result.assets && result.assets[0]) {
       try {
-        // Analyser l'image pour détecter un QR code
         const scannedResults = await BarCodeScanner.scanFromURLAsync(result.assets[0].uri);
         if (scannedResults && scannedResults.length > 0) {
-          // QR code détecté
           const data = scannedResults[0].data;
           setQrCodeData(data);
+          addQrCode("QR Code", data);
           Alert.alert("QR Code détecté", `Contenu: ${data}`);
 
-          console.log("Données du QR code:", data);
+          console.log("Le Qr code a été détecté et ajouté avec succès:");
         } else {
-          Alert.alert("Aucun QR code trouvé", "L'image ne contient pas de QR code valide.");
+          Alert.alert("Erreur : Aucun QR code trouvé", "L'image ne contient pas de QR code valide.");
         }
       } catch (error) {
         console.error("Erreur lors de la lecture du QR code:", error);
         Alert.alert("Erreur", "Impossible de lire le QR code depuis cette image.");
       }
     }
+  };
+
+  const renderQrCodeItem = ({ item }: { item: QrCode }) => {
+    return (
+      <View
+        style={{
+          padding: 10,
+          marginBottom: 10,
+          backgroundColor: theme.colors.card,
+          borderRadius: 8,
+        }}
+      >
+        <NativeText variant="title">{item.id}</NativeText>
+      </View>
+    );
   };
 
   return (
@@ -103,6 +129,57 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
             <NativeText variant="body">{qrCodeData}</NativeText>
           </View>
         )}
+
+        <View style={{ marginTop: 24 }}>
+          <View style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 16
+          }}>
+            <NativeText
+              variant="title"
+              style={{ fontSize: 18 }}
+            >
+              QR Codes enregistrés
+            </NativeText>
+            {savedQrCodes.length > 0 && (
+              <NativeText
+                variant="body"
+                style={{ color: theme.colors.text || "#666" }}
+              >
+                {savedQrCodes.length} {savedQrCodes.length === 1 ? "code" : "codes"}
+              </NativeText>
+            )}
+          </View>
+
+          {savedQrCodes.length === 0 ? (
+            <View style={{
+              padding: 20,
+              alignItems: "center",
+              backgroundColor: theme.colors.card,
+              borderRadius: 8
+            }}>
+              <NativeIcon
+                icon={<QrCodeIcon size={40} />}
+                color="#CCCCCC"
+                style={{ marginBottom: 12 }}
+              />
+              <NativeText
+                variant="body"
+                style={{ textAlign: "center", color: theme.colors.text || "#666" }}
+              >
+                Aucun QR code enregistré
+              </NativeText>
+            </View>
+          ) : (
+            savedQrCodes.map(code => (
+              <React.Fragment key={code.id}>
+                {renderQrCodeItem({ item: code })}
+              </React.Fragment>
+            ))
+          )}
+        </View>
       </View>
     </ScrollView>
   );
