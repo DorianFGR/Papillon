@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Alert } from "react-native";
+import { ScrollView, View, Alert, TouchableOpacity } from "react-native";
 import type { Screen } from "@/router/helpers/types";
 import { usePapillonTheme as useTheme } from "@/utils/ui/theme";
 import { useGradesStore } from "@/stores/grades";
@@ -9,7 +9,7 @@ import {
   NativeItem,
   NativeText,
 } from "@/components/Global/NativeComponents";
-import { Camera, File, Image, QrCodeIcon } from "lucide-react-native";
+import { Camera, Image, QrCodeIcon, Trash2 } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useCameraPermissions } from "expo-camera";
 import * as BarCodeScanner from "expo-barcode-scanner";
@@ -24,18 +24,13 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
   const reelsObject = useGradesStore((store) => store.reels);
   const reels = Object.values(reelsObject);
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
-  const { addQrCode, getAllQrCodes } = useQrCodeStore();
+  const { addQrCode, getAllQrCodes, removeQrCode } = useQrCodeStore();
   const [savedQrCodes, setSavedQrCodes] = useState<QrCode[]>([]);
 
   useEffect(() => {
     const codes = getAllQrCodes();
     setSavedQrCodes(codes);
   }, []);
-
-  const loadQrCodes = () => {
-    const codes = getAllQrCodes();
-    setSavedQrCodes(codes);
-  };
 
   const addQrCodePic = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -66,6 +61,12 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
     }
   };
 
+  const deleteQrCode = (id: string) => {
+
+    removeQrCode(id);
+    Alert.alert("QR Code supprimé", "Le QR code a été supprimé avec succès.");
+  };
+
   const renderQrCodeItem = ({ item }: { item: QrCode }) => {
     return (
       <View
@@ -77,6 +78,18 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
         }}
       >
         <NativeText variant="title">{item.id}</NativeText>
+        <TouchableOpacity
+          onPress={() => deleteQrCode(item.id)}
+          style={{
+            padding: 8,
+            borderRadius: 4,
+          }}
+        >
+          <NativeIcon
+            icon={<Trash2 size={20} />}
+            color="#FF3B30"
+          />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -98,18 +111,6 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
               />}
           >
             <NativeText variant="title">Depuis une image</NativeText>
-          </NativeItem>
-          <NativeItem
-            onPress={() => {
-              navigation.navigate("SettingsAddQrCode");
-            }}
-            leading={
-              <NativeIcon
-                icon={<File />}
-                color={"#006B6B"}
-              />}
-          >
-            <NativeText variant="title">Depuis un fichier </NativeText>
           </NativeItem>
           <NativeItem
             onPress={() => requestPermission()}
@@ -174,7 +175,7 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
             </View>
           ) : (
             savedQrCodes.map(code => (
-              <React.Fragment key={code.id}>
+              <React.Fragment key={code.name}>
                 {renderQrCodeItem({ item: code })}
               </React.Fragment>
             ))

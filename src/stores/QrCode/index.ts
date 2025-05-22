@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { create } from "zustand";
 import { log } from "@/utils/logger/logger";
 import { QrCode, QrCodeStore } from "./types";
+import uuid from "@/utils/uuid-v4";
 
 /**
  * Store for restaurant QR codes.
@@ -15,7 +16,7 @@ export const useQrCodeStore = create<QrCodeStore>()(
 
       addQrCode: (name, data) => {
         const newQrCode: QrCode = {
-          id: Date.now().toString(),
+          id: uuid(),
           name,
           data
         };
