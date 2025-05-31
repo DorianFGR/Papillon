@@ -158,6 +158,9 @@ export type RouteParameters = {
   SettingsProject: undefined;
   SettingsQrCode: undefined;
   SettingsAddQrCode: undefined;
+  SettingsNameQrCode: {
+    data: string;
+  };
 
   Menu?: undefined;
   RestaurantQrCode: {

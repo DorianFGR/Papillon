@@ -37,6 +37,7 @@ import SettingsExperimental from "@/views/settings/SettingsExperimental";
 import SettingsProject from "@/views/settings/SettingsProject";
 import SettingsQRcode from "@/views/settings/SettingsQrCode";
 import SettingsAddQrCode from "@/views/settings/SettingsAddQrCode";
+import SettingsNameQrCode from "@/views/settings/SettingsNameQrCode";
 
 const settingsScreens = [
   createScreen("Settings", Settings, {
@@ -171,6 +172,9 @@ const settingsScreens = [
   }),
   createScreen("SettingsAddQrCode", SettingsAddQrCode, {
     headerTitle: "Ajouter un QR Code",
+  }),
+  createScreen("SettingsNameQrCode", SettingsNameQrCode, {
+    headerTitle: "Nommer un QR Code",
   }),
 ] as const;
 

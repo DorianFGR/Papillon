@@ -30,7 +30,17 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
   useEffect(() => {
     const codes = getAllQrCodes();
     setSavedQrCodes(codes);
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadQrCodes();
+    });
+
+    return unsubscribe;
   }, []);
+
+  const loadQrCodes = () => {
+    const codes = getAllQrCodes();
+    setSavedQrCodes(codes);
+  };
 
   const addQrCodePic = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -47,15 +57,12 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
         if (scannedResults && scannedResults.length > 0) {
           const data = scannedResults[0].data;
           setQrCodeData(data);
-          addQrCode("QR Code", data);
-          Alert.alert("QR Code détecté", `Contenu: ${data}`);
+          navigation.navigate("SettingsNameQrCode", { data });
 
-          console.log("Le Qr code a été détecté et ajouté avec succès:");
         } else {
           Alert.alert("Erreur : Aucun QR code trouvé", "L'image ne contient pas de QR code valide.");
         }
       } catch (error) {
-        console.error("Erreur lors de la lecture du QR code:", error);
         Alert.alert("Erreur", "Impossible de lire le QR code depuis cette image.");
       }
     }
@@ -64,11 +71,13 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
   const deleteQrCode = (id: string) => {
 
     removeQrCode(id);
+    loadQrCodes();
     Alert.alert("QR Code supprimé", "Le QR code a été supprimé avec succès.");
   };
 
   const renderQrCodeItem = ({ item }: { item: QrCode }) => {
     return (
+
       <View
         style={{
           padding: 10,
@@ -77,7 +86,7 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
           borderRadius: 8,
         }}
       >
-        <NativeText variant="title">{item.id}</NativeText>
+        <NativeText variant="title">{item.name}</NativeText>
         <TouchableOpacity
           onPress={() => deleteQrCode(item.id)}
           style={{
@@ -86,7 +95,7 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
           }}
         >
           <NativeIcon
-            icon={<Trash2 size={20} />}
+            icon={<Trash2 size={1} />}
             color="#FF3B30"
           />
         </TouchableOpacity>
@@ -123,13 +132,6 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
             <NativeText variant="title">Scanner le QrCode</NativeText>
           </NativeItem>
         </NativeList>
-
-        {qrCodeData && (
-          <View style={{ marginTop: 16, padding: 10 }}>
-            <NativeText variant="title">QR Code détecté:</NativeText>
-            <NativeText variant="body">{qrCodeData}</NativeText>
-          </View>
-        )}
 
         <View style={{ marginTop: 24 }}>
           <View style={{
@@ -170,12 +172,12 @@ const SettingsAddQrCode: Screen<"SettingsAddQrCode"> = ({
                 variant="body"
                 style={{ textAlign: "center", color: theme.colors.text || "#666" }}
               >
-                Aucun QR code enregistré
+                Aucun QR code enregistré.
               </NativeText>
             </View>
           ) : (
             savedQrCodes.map(code => (
-              <React.Fragment key={code.name}>
+              <React.Fragment key={code.data}>
                 {renderQrCodeItem({ item: code })}
               </React.Fragment>
             ))
