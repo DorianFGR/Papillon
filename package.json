@@ -15,16 +15,12 @@
     "@howljs/calendar-kit": "^2.2.1",
     "@notifee/react-native": "^7.8.2",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-community/datetimepicker": "8.0.1",
+    "@react-native-community/datÒetimepicker": "8.0.1",
     "@react-native-community/netinfo": "11.3.1",
     "@react-native-cookies/cookies": "^6.2.1",
     "@react-native-masked-view/masked-view": "0.3.1",
-<<<<<<< HEAD
     "@react-native-ml-kit/barcode-scanning": "^1.4.1",
     "@react-native-picker/picker": "^2.11.0",
-=======
-    "@react-native-picker/picker": "2.7.5",
->>>>>>> upstream/main
     "@react-navigation/bottom-tabs": "^6.6.0",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
