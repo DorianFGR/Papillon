@@ -16,7 +16,6 @@ import * as Brightness from "expo-brightness";
 import Reanimated, { ZoomIn } from "react-native-reanimated";
 import { anim2Papillon } from "@/utils/ui/animations";
 
-
 const RestaurantQrCode: Screen<"RestaurantQrCode">  = ({ route, navigation }) => {
   const { card } = route.params;
   const [qrCode, setQrCode] = useState<string | null>(null);
