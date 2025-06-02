@@ -163,6 +163,7 @@ export type RouteParameters = {
   };
 
   Menu?: undefined;
+  ChooseQrCode: undefined;
   RestaurantQrCode: {
     card: ServiceCard;
   };

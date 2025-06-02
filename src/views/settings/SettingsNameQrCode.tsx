@@ -44,7 +44,7 @@ const SettingsNameQrCode: Screen<"SettingsNameQrCode"> = ({
     if (qrCodeName) {
       addQrCode(qrCodeName, data);
       loadQrCodes();
-      navigation.navigate("SettingsAddQrCode");
+      navigation.navigate("SettingsQrCode");
     } else {
       Alert.alert("Erreur", "Le nom du QrCode ne peut pas être vide.");
     }
