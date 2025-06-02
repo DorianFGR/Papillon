@@ -40,7 +40,6 @@ const SettingsNameQrCode: Screen<"SettingsNameQrCode"> = ({
   };
 
   const addQrCodeAction = () => {
-
     if (qrCodeName) {
       addQrCode(qrCodeName, data);
       loadQrCodes();
